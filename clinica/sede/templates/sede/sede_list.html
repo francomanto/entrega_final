@@ -1,0 +1,37 @@
+{% extends "home/index.html" %}
+{% load static %}
+
+{% block my_blog_title %}
+Sede
+{% endblock %}
+
+{% block my_blog_header %}
+    <header class="masthead" style="background-image: url('../../static/home/assets/img/ubicacion.png')">
+        <div class="container position-relative px-4 px-lg-5">
+            <div class="row gx-4 gx-lg-5 justify-content-center">
+                <div class="col-md-15 col-lg-16 col-xl-14">
+                    <div class="site-heading">
+                        <h1>Sedes</h1>
+                        <span class="subheading"> Podes encontrar nuestras sucursales: </span>
+                    </div>
+                </div>
+            </div>
+            {% if user.is_superuser %}
+            <a class="button_custom" href="{% url 'sede:sede-add' %}">Crear nueva Sede</a>
+            {% endif %}
+        </div>
+    </header>
+{% endblock %}
+
+{% block my_blog_content %}
+    {% for sede in sedes %}
+        <!-- Post preview-->
+        <div class="post-preview">
+            <h2 class="post-title">{{ sede.name }}</h2>
+            <h3 class="post-subtitle">Direccion: {{ sede.dir }}</h3>
+            <h3 class="post-subtitle">Telefono: {{ sede.tel }}</h3>
+        </div>
+        <!-- Divider-->
+        <hr class="my-4" />
+    {% endfor %}
+{% endblock %}

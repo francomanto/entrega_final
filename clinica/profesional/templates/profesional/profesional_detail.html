@@ -1,0 +1,86 @@
+{% extends "home/index.html" %}
+{% load static %}
+
+{% block my_blog_title %}
+Profesional detail
+{% endblock %}
+
+{% block my_blog_header %}
+<header class="masthead" style="background-image: url('/static/home/assets/img/medicos.png')">
+    <div class="container position-relative px-4 px-lg-5">
+        <div class="row gx-4 gx-lg-5 justify-content-center">
+            <div class="col-md-15 col-lg-16 col-xl-14">
+                <div class="site-heading">
+                    <h1>{{ profesional.name }}</h1>
+                    <h1>{{ profesional.last_name }}</h1>
+                    <span class="subheading">Detalles del Profesional</span>
+                </div>
+            </div>
+        </div>
+        <a class="button_custom" href="{% url 'profesional:profesional-add' %}">Crear nuevo Profesional</a>
+    </div>
+</header>
+{% endblock %}
+
+
+{% block my_blog_content %}
+<!-- Post preview-->
+<div class="post-preview">
+    <h3 class="post-subtitle">Especialidad: {{ profesional.especialidad }}</h3>
+    <h6 class="post-subtitle">Telefono: {{ profesional.tel }}</h6>
+    <h6 class="post-subtitle">Email: {{ profesional.email }}</h6>
+    <p class="post-meta">
+        Creado por
+        <span style="color: #0b4956;" href="">{{ profesional.owner.username }}</span>
+        ( {{ course.created_at }} )
+        <br>
+        Última fecha de actualización ( {{ profesional.updated_at }} )
+    </p>
+
+    <!-- Image -->
+    {% if profesional.image %}
+        <div style="text-align: center;">
+            <img height="250px" src="{{ profesional.image.url }}">
+        </div>
+    {% endif %}
+
+    <!-- Description -->
+    <p class="card-text ">{{ profesional.description|safe }}</p> <!-- ckeditor-->
+
+    <!-- Update-Delete link only for the owner -->
+    {% if user == profesional.owner or user.is_superuser %}
+        <p style="text-align: center">
+            <a href="{% url 'profesional:profesional-update' profesional.id %}">
+                <i class="fa fa-pencil" style="color: #1c1c91;"></i> Editar Profesional
+            </a>
+            &ensp; | &ensp;
+            <a href="{% url 'profesional:profesional-delete' profesional.id %}">
+                <i class="fa fa-trash" style="color: #881a1a;"></i> Eliminar Profesional
+            </a>
+        </p>
+    {% endif %}
+    
+    <!-- Divider-->
+    <hr class="my-4" />
+
+    <!-- Comment creation -->
+    <form method="POST" action="{% url 'profesional:comment-create' profesional.id %}">
+        {% csrf_token %}
+        {{ comment_form }}
+    <input type="submit" value="Publicar comentario">
+    </form>
+    {% if not comments %}
+        <p></p>
+    {% endif %}
+
+    <!-- Comments list -->
+    {% for comment in comments %}
+        <p> {{ comment.text }}
+            ({{ comment.owner.username }} | {{ comment.updated_at }})
+            {% if user == comment.owner or user.is_superuser %}
+            <a href="{% url 'profesional:comment-delete' comment.id %}"><i class="fa fa-trash" style="color: #881a1a;"></i></a>
+            {% endif %}
+        </p>
+    {% endfor %}
+</div>
+{% endblock %}
